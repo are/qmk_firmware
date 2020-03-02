@@ -19,6 +19,9 @@ enum custom_keycodes {
 #define CTL_F2  LCTL(KC_F2)
 #define SFT_ENT LSFT_T(KC_ENTER)
 #define XC_LOCK LCMD(LCTL(KC_Q))
+#define XCMD_SP LCMD(KC_SPACE)
+#define XSFT_EN LSFT(KC_ENTER)
+#define XCTL_BS LCTL(KC_BSPACE)
 #define LM_SYMB MO(SYMB) // momentary layer to SYMB
 #define LM_FUNC MO(CUST) // momentary layer to FUNC
 
@@ -28,7 +31,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_F1  , KC_1   , KC_2   , KC_3   , KC_4   , KC_5   , XXXXXXX,
   KC_TAB , KC_Q   , KC_W   , KC_E   , KC_R   , KC_T   , XXXXXXX,
   XXXXXXX, KC_A   , KC_S   , KC_D   , KC_F   , KC_G   ,
-  KC_RALT, KC_Z   , KC_X   , KC_C   , KC_V   , KC_B   , XXXXXXX,
+  KC_RALT, KC_Z   , KC_X   , KC_C   , KC_V   , KC_B   , KC_LSFT,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, LM_FUNC,
                                       CTL_F2 , KC_ESC ,
                                                XXXXXXX,
@@ -72,7 +75,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
                                       XXXXXXX, XXXXXXX,
                                                XXXXXXX,
-                             XXXXXXX, XXXXXXX, XXXXXXX,
+                             XCMD_SP, XCTL_BS, XXXXXXX,
 
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
@@ -81,7 +84,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX,
   XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX
+  XXXXXXX, XXXXXXX, XSFT_EN
 ),
 };
 
@@ -89,7 +92,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case XC_VRSN:
       if (record->event.pressed) {
-        SEND_STRING("1/28-02-2020/Are");
+        SEND_STRING("2/28-02-2020/Are");
       }
       return false; // Skip all further processing of this key
     default:
