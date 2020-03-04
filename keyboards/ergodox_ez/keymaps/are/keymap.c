@@ -11,17 +11,21 @@
 enum custom_keycodes {
   PLACEHOLDER = SAFE_RANGE,
   XC_VRSN,
+  XC_RAND
 };
 
 // ALIASES
 #define CMD_SPC LCMD_T(KC_SPACE)
 #define CTL_BSP LCTL_T(KC_BSPACE)
-#define CTL_F2  LCTL(KC_F2)
 #define SFT_ENT LSFT_T(KC_ENTER)
-#define XC_LOCK LCMD(LCTL(KC_Q))
+#define XCTL_F2 LCTL(KC_F2)
 #define XCMD_SP LCMD(KC_SPACE)
 #define XSFT_EN LSFT(KC_ENTER)
 #define XCTL_BS LCTL(KC_BSPACE)
+
+#define XLOCKSC LCMD(LCTL(KC_Q))
+#define XSCNSHT LCMD(LSFT(KC_4))
+
 #define LM_SYMB MO(SYMB) // momentary layer to SYMB
 #define LM_FUNC MO(CUST) // momentary layer to FUNC
 
@@ -33,7 +37,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   XXXXXXX, KC_A   , KC_S   , KC_D   , KC_F   , KC_G   ,
   KC_RALT, KC_Z   , KC_X   , KC_C   , KC_V   , KC_B   , KC_LSFT,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, LM_FUNC,
-                                      CTL_F2 , KC_ESC ,
+                                      XCTL_F2, KC_ESC ,
                                                XXXXXXX,
                              CMD_SPC, CTL_BSP, KC_HYPR,
 
@@ -49,13 +53,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // symbols
 [SYMB] = LAYOUT_ergodox(
   XXXXXXX, KC_EXLM, KC_AT  , KC_HASH, KC_DLR , KC_PERC, XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, KC_EQL , XXXXXXX, KC_TILD, XXXXXXX,
+  _______, XXXXXXX, XXXXXXX, KC_EQL , XXXXXXX, KC_TILD, XXXXXXX,
   XXXXXXX, KC_AT  , KC_ASTR, KC_DLR , KC_MINS, KC_PLUS,
-  XXXXXXX, XXXXXXX, XXXXXXX, KC_CIRC, KC_UNDS, XXXXXXX, XXXXXXX,
+  _______, XXXXXXX, XXXXXXX, KC_CIRC, KC_UNDS, XXXXXXX, _______,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
                                       XXXXXXX, XXXXXXX,
                                                XXXXXXX,
-                             XXXXXXX, XXXXXXX, XXXXXXX,
+                             _______, _______, XXXXXXX,
 
   XXXXXXX,  KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, XXXXXXX,
   XXXXXXX,  XXXXXXX, KC_COLN, KC_LPRN, KC_RPRN, KC_PERC, XXXXXXX,
@@ -64,12 +68,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                      KC_HOME, KC_LBRC, KC_RBRC, KC_END , XXXXXXX,
   XXXXXXX, XXXXXXX,
   XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX
+  _______, XXXXXXX, _______
 ),
 // functional
 [CUST] = LAYOUT_ergodox(
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XC_RAND, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XC_VRSN, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
@@ -78,8 +82,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                              XCMD_SP, XCTL_BS, XXXXXXX,
 
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-            XXXXXXX, XXXXXXX, XXXXXXX, XC_LOCK, XXXXXXX, XXXXXXX,
+  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XSCNSHT, XXXXXXX,
+            XXXXXXX, XXXXXXX, XXXXXXX, XLOCKSC, XXXXXXX, XXXXXXX,
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX,
@@ -92,9 +96,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case XC_VRSN:
       if (record->event.pressed) {
-        SEND_STRING("2/28-02-2020/Are");
+        SEND_STRING("3/03-03-2020/Are");
       }
-      return false; // Skip all further processing of this key
+      return false;
+    case XC_RAND:
+      if (record->event.pressed) {
+        tap_random_base64();
+      }
+      return false;
     default:
       return true; // Process all other keycodes normally
   }
@@ -115,13 +124,15 @@ void matrix_scan_user(void) {
 
   switch (layer) {
     case BASE:
-      ergodox_right_led_1_on();
+      ergodox_right_led_3_on();
       break;
     case SYMB:
-      ergodox_right_led_2_on();
+      ergodox_right_led_3_on();
+      ergodox_right_led_1_on();
       break;
     case CUST:
       ergodox_right_led_3_on();
+      ergodox_right_led_2_on();
       break;
     default:
       break;
